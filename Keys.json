@@ -1,0 +1,28 @@
+{
+  "keys": [
+    {
+      "id": 1,
+      "key": "SHADIN-TRUE-ABC123",
+      "generated": "2026-01-15T10:00",
+      "expiry": "2026-12-31T23:59",
+      "status": "active",
+      "shadin": true
+    },
+    {
+      "id": 2,
+      "key": "SHADIN-FALSE-DEF456",
+      "generated": "2026-02-01T08:30",
+      "expiry": "2026-06-30T23:59",
+      "status": "inactive",
+      "shadin": false
+    },
+    {
+      "id": 3,
+      "key": "SHADIN-TRUE-GHI789",
+      "generated": "2026-03-10T14:20",
+      "expiry": "2026-05-15T23:59",
+      "status": "expired",
+      "shadin": true
+    }
+  ]
+}
