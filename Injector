@@ -1,0 +1,55 @@
+const gameConfig = {
+  gameAssetBundles: {
+    config: {
+      open: {
+        "10s Mocha VNC Lite": "ANTIBAN 100%",
+
+        "10s Mocha VNC Lite sensi": {
+          timeToMaximumSpeed: 10000000000,
+          sensi: {},
+          weapons: {},
+          recoilSettings: {},
+          sensitivitySettings: {}
+        }
+      }
+    }
+  }
+};
+
+const gunList = [
+  "M1887",
+  "SPAS12",
+  "M1014",
+  "MAG-7",
+  "UMP",
+  "MP40",
+  "P90",
+  "M4A1",
+  "AK47",
+  "SCAR",
+  "AWM",
+  "KAR98K",
+  "M24",
+  "USP",
+  "DESERTEAGLE"
+];
+
+gunList.forEach((gun) => {
+
+  const weapon =
+    gameConfig.gameAssetBundles.config.open[
+      "10s Mocha VNC Lite sensi"
+    ].weapons;
+
+  weapon[gun] = {
+    enabled: true,
+    recoilSettings: {
+      enabled: false
+    },
+    sensitivitySettings: {
+      enabled: false
+    }
+  };
+});
+
+module.exports = gameConfig;
