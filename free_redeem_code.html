@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b1020">
+<title>FREE REDEEM CODE</title>
+<style>
+:root{--bg:#080b16;--card:#11182b;--line:#273454;--text:#f5f7ff;--muted:#aab4cf;--accent:#58f0c5;--gold:#ffd166}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:radial-gradient(circle at top,#172343 0,#080b16 48%);color:var(--text);min-height:100vh}
+.wrap{width:min(920px,100%);margin:auto;padding:24px 16px 48px}
+header{text-align:center;padding:24px 8px 18px}
+.badge{display:inline-block;border:1px solid #3d567e;border-radius:999px;padding:6px 12px;color:var(--accent);font-size:12px;letter-spacing:2px}
+h1{font-size:clamp(28px,7vw,46px);line-height:1.05;margin:16px 0 8px;font-weight:900;letter-spacing:1px}
+h1 span{color:var(--accent)}
+.subtitle{color:var(--muted);margin:0 auto;max-width:560px;font-size:14px}
+.notice{background:#2a2111;border:1px solid #665023;color:#ffe4a0;padding:12px 14px;border-radius:14px;font-size:13px;line-height:1.5;margin:18px 0}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:26px 0 12px}
+.section-title h2{font-size:18px;margin:0}
+.section-title small{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:linear-gradient(150deg,#151e35,#0e1425);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 10px 28px #0003}
+.amount{font-size:25px;font-weight:850}.amount small{font-size:12px;color:var(--muted);font-weight:500}
+.time{color:var(--muted);font-size:13px;margin:3px 0 14px}
+button{font:inherit;cursor:pointer;border:0;border-radius:11px;padding:11px 13px;font-weight:800}
+.claim{width:100%;background:var(--accent);color:#071411}
+.claim:disabled{background:#303a50;color:#aeb8cf;cursor:not-allowed}
+.status{font-size:12px;color:var(--muted);margin-top:10px;min-height:18px}
+.code-list{display:grid;gap:10px}
+.code-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#0d1425;border:1px solid var(--line);padding:12px;border-radius:12px}
+.code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px;overflow-wrap:anywhere;letter-spacing:.4px}
+.copy{background:#253453;color:#fff;flex-shrink:0}
+.locked{color:var(--muted);font-size:13px}
+footer{text-align:center;color:#8793b1;font-size:12px;margin-top:28px;line-height:1.6}
+@media(max-width:520px){.grid{grid-template-columns:1fr}.card{padding:14px}.code-row{align-items:flex-start}.code{padding-top:8px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="badge">REWARD • COUNTDOWN • CLAIM</div>
+  <h1>FREE <span>REDEEM CODE</span></h1>
+  <p class="subtitle">Choose a reward tier and wait for its countdown to finish.</p>
+</header>
+
+<div class="section-title"><h2>🎁 Choose your reward</h2><small>Countdown timer</small></div>
+<div class="grid" id="tiers"></div>
+
+<div class="section-title"><h2>🔐 Your claimed codes</h2><small id="claimedCount">0 claimed</small></div>
+<div class="code-list" id="claimed"><div class="card locked">No codes claimed yet. Choose a tier above.</div></div>
+
+<footer>Fan-made page • Not affiliated with Garena.<br>Only redeem codes from trusted, official sources.</footer>
+</div>
+<script>
+const codePool = [
+  "64HTPMP7TTA7M16S",
+  "HIE6HWI82HSKUEBDB",
+  "8BSI9NHILO796HEBZ",
+  "FFPLUFBVSLOT",
+  "FFCMCPSGC9XZ",
+  "FFCMCPSEN5MX",
+  "FF7MUY4ME6SC",
+  "FFPLUJEHBSVB",
+  "FFCBRAXQTS9S",
+  "MCPW3D28VZD6",
+  "FFDMNSW9KG2",
+  "V427K98RUCHZ",
+  "6KWMFJVMQQYG"
+];
+// Demo timing: ₹50 = 1 hour, then 1 additional hour for each ₹50 tier.
+// Change to [1, 2, 4, 6, 8, 10] for shorter test timers, in hours.
+const tiers = [
+  {amount:50,hours:1},
+  {amount:100,hours:2},
+  {amount:200,hours:4},
+  {amount:300,hours:6},
+  {amount:400,hours:8},
+  {amount:500,hours:10}
+];
+const storageKey = "freeRedeemDemo_v1";
+let state;
+try { state = JSON.parse(localStorage.getItem(storageKey) || "{}"); } catch(e) { state = {}; }
+if (!Array.isArray(state.claimed)) state.claimed = [];
+if (!state.starts || typeof state.starts !== "object") state.starts = {};
+const tiersEl = document.getElementById("tiers");
+const claimedEl = document.getElementById("claimed");
+function save(){ localStorage.setItem(storageKey, JSON.stringify(state)); }
+function fmt(ms){
+  if(ms<=0) return "00:00:00";
+  const sec=Math.floor(ms/1000), h=Math.floor(sec/3600), m=Math.floor(sec%3600/60), s=sec%60;
+  return [h,m,s].map(n=>String(n).padStart(2,"0")).join(":");
+}
+function claimTier(amount){
+  const tier=tiers.find(t=>t.amount===amount);
+  if(!tier) return;
+  const start=state.starts[amount];
+  if(!start){ state.starts[amount]=Date.now(); save(); render(); return; }
+  const remaining=tier.hours*3600000-(Date.now()-start);
+  if(remaining>0) return;
+  const available=codePool.filter(c=>!state.claimed.some(x=>x.code===c));
+  if(!available.length){ alert("Code list is empty."); return; }
+  // Reveal one code only after countdown completion.
+  const code=available[0];
+  state.claimed.push({amount,code,time:Date.now()});
+  delete state.starts[amount];
+  save(); render();
+}
+function renderTiers(){
+  tiersEl.innerHTML="";
+  for(const t of tiers){
+    const start=state.starts[t.amount];
+    const remaining=start ? t.hours*3600000-(Date.now()-start) : null;
+    const ready=remaining!==null && remaining<=0;
+    const card=document.createElement("article"); card.className="card";
+    card.innerHTML=`<div class="amount">₹${t.amount} <small>REWARD</small></div>
+      <div class="time">Waiting time: ${t.hours} hour${t.hours===1?"":"s"}</div>
+      <button class="claim">${!start?"START TIMER":ready?"REVEAL CODE":"WAIT "+fmt(remaining)}</button>
+      <div class="status">${!start?"Start the countdown to unlock a code.":ready?"Timer complete. Tap to reveal one code.":"Timer runs while this page is closed on this device."}</div>`;
+    const btn=card.querySelector("button");
+    btn.disabled=!!start && !ready;
+    btn.addEventListener("click",()=>claimTier(t.amount));
+    tiersEl.appendChild(card);
+  }
+}
+function renderClaimed(){
+  document.getElementById("claimedCount").textContent=`${state.claimed.length} claimed`;
+  if(!state.claimed.length){claimedEl.innerHTML='<div class="card locked">No codes claimed yet. Choose a tier above.</div>';return;}
+  claimedEl.innerHTML="";
+  [...state.claimed].reverse().forEach(item=>{
+    const row=document.createElement("div");row.className="code-row";
+    const left=document.createElement("div");
+    const label=document.createElement("div");label.className="locked";label.textContent=`₹${item.amount} reward`;
+    const code=document.createElement("div");code.className="code";code.textContent=item.code;
+    left.append(label,code);
+    const btn=document.createElement("button");btn.className="copy";btn.textContent="COPY";
+    btn.addEventListener("click",async()=>{
+      try{await navigator.clipboard.writeText(item.code);btn.textContent="COPIED!";}
+      catch(e){const ta=document.createElement("textarea");ta.value=item.code;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();btn.textContent="COPIED!";}
+      setTimeout(()=>btn.textContent="COPY",1200);
+    });
+    row.append(left,btn);claimedEl.appendChild(row);
+  });
+}
+function render(){renderTiers();renderClaimed();}
+render();
+setInterval(()=>{
+  // Update countdown labels without revealing any code automatically.
+  renderTiers();
+},1000);
+</script>
+</body>
+</html>
